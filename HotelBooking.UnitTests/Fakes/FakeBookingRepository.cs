@@ -35,7 +35,7 @@ namespace HotelBooking.UnitTests.Fakes
 
         public Booking Get(int id)
         {
-            return new Booking { Id = 1, StartDate = fullyOccupiedStartDate, EndDate = fullyOccupiedEndDate, IsActive = true, CustomerId = 1, RoomId = 1 };
+            return new Booking { Id = id, StartDate = fullyOccupiedStartDate, EndDate = fullyOccupiedEndDate, IsActive = true, CustomerId = 1, RoomId = 1 };
         }
 
         public IEnumerable<Booking> GetAll()
