@@ -16,24 +16,19 @@ namespace HotelBooking.UnitTests
         DateTime end;
         IRepository<Room> roomRepository;
 
-        private void ResetVariables()
-        {
-            bookingRepository = new FakeBookingRepository(start, end);
-            roomRepository = new FakeRoomRepository();
-            bookingManager = new BookingManager(bookingRepository, roomRepository);
-        }
-
         public BookingManagerTests()
         {
             start = DateTime.Today.AddDays(10);
             end = DateTime.Today.AddDays(20);
+            bookingRepository = new FakeBookingRepository(start, end);
+            roomRepository = new FakeRoomRepository();
+            bookingManager = new BookingManager(bookingRepository, roomRepository);
         }
 
         [Fact]
         public void FindAvailableRoom_StartDateNotInTheFuture_ThrowsArgumentException()
         {
             // Arrange
-            ResetVariables();
             DateTime date = DateTime.Today;
 
             // Act
@@ -47,7 +42,6 @@ namespace HotelBooking.UnitTests
         public void FindAvailableRoom_RoomAvailable_RoomIdNotMinusOne()
         {
             // Arrange
-            ResetVariables();
             DateTime date = DateTime.Today.AddDays(1);
             // Act
             int roomId = bookingManager.FindAvailableRoom(date, date);
@@ -62,7 +56,6 @@ namespace HotelBooking.UnitTests
             // principle: "Tests should have strong assertions".
 
             // Arrange
-            ResetVariables();
             DateTime date = DateTime.Today.AddDays(1);
 
             // Act
@@ -82,7 +75,6 @@ namespace HotelBooking.UnitTests
         public void CreateBooking_BookingAvailable_ReturnsTrue()
         {
             // Arrange
-            ResetVariables();
             Booking booking = bookingRepository.Get(2);
             booking.StartDate = booking.StartDate.AddDays(20);
             booking.EndDate = booking.EndDate.AddDays(30);
@@ -99,7 +91,6 @@ namespace HotelBooking.UnitTests
         public void CreateBooking_BookingAvailable_BookingIdIsSameAsInput()
         {
             // Arrange
-            ResetVariables();
             Booking booking = bookingRepository.Get(2);
 
             // Act
@@ -114,7 +105,6 @@ namespace HotelBooking.UnitTests
         public void CreateBooking_StartDateIsLaterThanEndDate_ReturnsFalse()
         {
             // Arrange
-            ResetVariables();
             Booking booking = bookingRepository.Get(1);
             booking.StartDate.AddDays(20);
 
@@ -129,7 +119,6 @@ namespace HotelBooking.UnitTests
         public void CreateBooking_DuplicateRoomBooking_ReturnsFalse()
         {
             // Arrange
-            ResetVariables();
             Booking booking = bookingRepository.Get(1);
 
             // Act
@@ -140,7 +129,43 @@ namespace HotelBooking.UnitTests
             Assert.False(UnsuccessfulBooking);
         }
 
+        [Fact]
+        public void GetFullyOccupiedDates_StartDateBiggerThanEndDate_ThrowsException()
+        {
+            //Arrange
+            var startDate = DateTime.Today.AddDays(3);
+            var endDate = DateTime.Today.AddDays(2);
+
+            //Act + Assert
+            Assert.Throws<ArgumentException>( () => bookingManager.GetFullyOccupiedDates(startDate, endDate));
+
+        }
+
+        [Fact]
+        public void GetFullyOccupiedDates_OccupiedDates_ReturnsNonEmptyList()
+        {
+            //Arrange
 
 
+            //Act
+            var result = bookingManager.GetFullyOccupiedDates(start, end);
+
+            //Assert
+            Assert.NotEmpty(result);
+        }
+
+        [Fact]
+        public void GetFullyOccupiedDates_UnocupiedDates_ReturnsEmptyList()
+        {
+            //Arrange
+            var startDate = DateTime.Today.AddDays(1);
+            var endDate = DateTime.Today.AddDays(2);
+
+            //Act
+            var result = bookingManager.GetFullyOccupiedDates(startDate, endDate);
+
+            //Assert
+            Assert.Empty(result);
+        }
     }
 }
