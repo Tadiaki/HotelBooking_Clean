@@ -19,15 +19,14 @@ namespace HotelBooking.UnitTests
         private void ResetVariables()
         {
             bookingRepository = new FakeBookingRepository(start, end);
-            IRepository<Room> roomRepository = new FakeRoomRepository();
-
+            roomRepository = new FakeRoomRepository();
             bookingManager = new BookingManager(bookingRepository, roomRepository);
         }
 
         public BookingManagerTests()
         {
-            DateTime start = DateTime.Today.AddDays(10);
-            DateTime end = DateTime.Today.AddDays(20);
+            start = DateTime.Today.AddDays(10);
+            end = DateTime.Today.AddDays(20);
         }
 
         [Fact]
@@ -48,6 +47,7 @@ namespace HotelBooking.UnitTests
         public void FindAvailableRoom_RoomAvailable_RoomIdNotMinusOne()
         {
             // Arrange
+            ResetVariables();
             DateTime date = DateTime.Today.AddDays(1);
             // Act
             int roomId = bookingManager.FindAvailableRoom(date, date);
@@ -62,6 +62,7 @@ namespace HotelBooking.UnitTests
             // principle: "Tests should have strong assertions".
 
             // Arrange
+            ResetVariables();
             DateTime date = DateTime.Today.AddDays(1);
 
             // Act
@@ -83,6 +84,8 @@ namespace HotelBooking.UnitTests
             // Arrange
             ResetVariables();
             Booking booking = bookingRepository.Get(2);
+            booking.StartDate = booking.StartDate.AddDays(20);
+            booking.EndDate = booking.EndDate.AddDays(30);
 
             // Act
             bool bookingResult = bookingManager.CreateBooking(booking);
@@ -100,7 +103,7 @@ namespace HotelBooking.UnitTests
             Booking booking = bookingRepository.Get(2);
 
             // Act
-            bool bookingResult = bookingManager.CreateBooking(booking);
+            bookingManager.CreateBooking(booking);
 
             // Assert
             Assert.Equal(2, booking.Id);
