@@ -11,8 +11,8 @@ namespace HotelBooking.Specs.StepDefinitions
     [Binding]
     public class CreateBookingStepDefinitions
     {
-        private Mock<IRepository<Booking>> mockBookingRepo = new Mock<IRepository<Booking>>();
-        private Mock<IRepository<Room>> mockRoomRepo = new Mock<IRepository<Room>>();
+        private Mock<IRepository<Booking>> mockBookingRepo = new();
+        private Mock<IRepository<Room>> mockRoomRepo = new();
         private IBookingManager bookingManager;
         private Booking booking = new();
         private bool bookingResult;
@@ -44,8 +44,8 @@ namespace HotelBooking.Specs.StepDefinitions
             // Mock get all function, to return the room we are attempting to book later on.
             mockRoomRepo.Setup(repo => repo.GetAll()).Returns(new List<Room>
             {
-                new Room { Id = 1, Description = "Standard Room" },
-                new Room { Id = 2, Description = "Deluxe Room" }
+                new() { Id = 1, Description = "Standard Room" },
+                new() { Id = 2, Description = "Deluxe Room" }
             }.AsQueryable());
         }
 
